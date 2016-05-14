@@ -183,10 +183,18 @@ defmodule ExMachina.Ecto do
     record.__struct__.__schema__(:association, association_name).owner_key
   end
 
+  defp get_association_pkey_value(association) do
+    [primary_key] = association.__struct__.__schema__(:primary_key)
+    %{^primary_key => value} = association
+    value
+  end
+
   defp put_assoc(record, association_name, association) do
     association_id = get_owner_key(record, association_name)
+    association_pkey_value = get_association_pkey_value(association)
+
     record
-    |> Map.put(association_id, association.id)
+    |> Map.put(association_id, association_pkey_value)
     |> Map.put(association_name, association)
   end
 
